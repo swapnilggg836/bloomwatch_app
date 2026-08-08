@@ -11,11 +11,12 @@
 
   <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem;">
     {% for s in suggestions %}
+      {% set s_low = s|lower %}
       <div class="glass-card" style="border-left: 5px solid var(--primary); display: flex; align-items: flex-start; gap: 1.25rem;">
         <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--primary-dark); font-size: 1.5rem;">
-          {% if 'fertilizer' in s.lower() %}
+          {% if 'fertilizer' in s_low %}
             <i class="bi bi-flower2"></i>
-          {% elif 'irrigation' in s.lower() %}
+          {% elif 'irrigation' in s_low %}
             <i class="bi bi-droplet-half"></i>
           {% else %}
             <i class="bi bi-shield-exclamation"></i>
@@ -24,9 +25,9 @@
         <div style="flex: 1;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
             <h3 style="font-size: 1.15rem; color: var(--primary-dark);">
-              {% if 'fertilizer' in s.lower() %}
+              {% if 'fertilizer' in s_low %}
                 Fertilizer Usage Recommendation
-              {% elif 'irrigation' in s.lower() %}
+              {% elif 'irrigation' in s_low %}
                 Regional Irrigation Alert
               {% else %}
                 Crop Health & Nutrient Advisory

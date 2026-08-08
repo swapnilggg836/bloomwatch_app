@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import json
 
 db = SQLAlchemy()
 
@@ -13,6 +14,13 @@ class AnalysisHistory(db.Model):
     summary = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def get_metrics_dict(self):
+        if self.metrics:
+            try:
+                return json.loads(self.metrics)
+            except Exception:
+                return {}
+        return {}
+
     def __repr__(self):
         return f"<AnalysisHistory {self.input_file}>"
-

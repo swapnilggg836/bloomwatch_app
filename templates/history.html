@@ -1,15 +1,71 @@
 {% extends "base.html" %}
+
+{% block title %}Analysis History — BloomWatch Log{% endblock %}
+
 {% block content %}
-<h2>History</h2>
-<table>
-<tr><th>ID</th><th>Filename</th><th>Summary</th><th>Date</th></tr>
-{% for r in records %}
-  <tr>
-    <td>{{ r[0] }}</td>
-    <td>{{ r[1] }}</td>
-    <td>{{ r[2][:100] }}...</td>
-    <td>{{ r[3] }}</td>
-  </tr>
-{% endfor %}
-</table>
+<div class="animate-fade">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <h1 style="font-size: 2.25rem; color: var(--primary-dark); margin-bottom: 0.25rem;">Analysis Log & History</h1>
+      <p style="color: var(--text-muted);">View previous dataset runs, examine machine learning accuracy, and download generated PDF reports.</p>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Analysis</a>
+  </div>
+
+  {% if records %}
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Filename</th>
+            <th>Cleaned Rows</th>
+            <th>RF Accuracy</th>
+            <th>Date Processed</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+            {% set metrics = r.get_metrics_dict() %}
+            <tr>
+              <td>#{{ r.id }}</td>
+              <td>
+                <strong style="color: var(--primary-dark);"><i class="bi bi-file-earmark-spreadsheet-fill"></i> {{ r.input_file }}</strong>
+              </td>
+              <td>{{ r.rows_cleaned or '-' }}</td>
+              <td>
+                {% if metrics and metrics.get('accuracy') %}
+                  <span style="display: inline-block; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: #d1fae5; color: #065f46; font-weight: 700; font-size: 0.85rem;">
+                    {{ (metrics['accuracy'] * 100)|round(1) }}%
+                  </span>
+                {% else %}
+                  <span style="color: var(--text-muted);">-</span>
+                {% endif %}
+              </td>
+              <td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') if r.created_at else '-' }}</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  {% if r.pdf_path %}
+                    <a href="{{ url_for('download', pdfname=r.pdf_path) }}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">
+                      <i class="bi bi-download"></i> PDF
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  {% else %}
+    <div class="glass-card" style="text-align: center; padding: 4rem 2rem;">
+      <i class="bi bi-clock-history" style="font-size: 3.5rem; color: var(--text-muted);"></i>
+      <h3 style="margin-top: 1rem; color: var(--text-main);">No Past Analysis Records Found</h3>
+      <p style="color: var(--text-muted); margin-bottom: 1.75rem;">Upload your first satellite CSV dataset to create an analysis record.</p>
+      <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="bi bi-cloud-upload"></i> Upload Dataset</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

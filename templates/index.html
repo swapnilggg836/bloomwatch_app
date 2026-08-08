@@ -1,8 +1,66 @@
 {% extends "base.html" %}
+
+{% block title %}Upload Dataset — BloomWatch Predictive Analytics{% endblock %}
+
 {% block content %}
-<h2>Upload Dataset(s)</h2>
-<form method="post" enctype="multipart/form-data">
-  <input type="file" name="datafile" multiple required>
-  <button type="submit">Upload & Analyze</button>
-</form>
+<div class="animate-fade">
+  
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Automated <span>Algal Bloom</span> Analytics</h1>
+      <p class="hero-subtitle">Upload satellite sensor datasets (CSV) to clean records, perform machine learning predictions, generate automated scatter plots, and download PDF reports.</p>
+    </div>
+  </div>
+
+  <div style="max-width: 850px; margin: 0 auto;">
+    <div class="glass-card">
+      <form id="uploadForm" action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="datafile" accept=".csv" multiple style="display: none;">
+        
+        <div class="upload-zone" id="dropZone">
+          <i class="bi bi-cloud-arrow-up-fill upload-icon"></i>
+          <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--primary-dark);">Drag & Drop CSV Dataset Here</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.25rem;">or click anywhere inside this area to select local CSV files</p>
+          <span class="btn btn-outline" style="pointer-events: none;"><i class="bi bi-folder2-open"></i> Select CSV File(s)</span>
+        </div>
+
+        <div id="fileDetails" style="display: none; margin-top: 1.25rem; padding: 0.85rem 1.25rem; background: #d1fae5; border-radius: var(--radius-sm); color: #065f46; font-weight: 600;">
+          <i class="bi bi-file-earmark-spreadsheet-fill"></i> <span id="fileNameDisplay">Selected File: -</span>
+        </div>
+
+        <div class="progress-bar-container" id="progressBarContainer">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <div id="uploadStatus" style="font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); margin-top: 0.75rem; text-align: center;"></div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+          <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 340px; font-size: 1.05rem;">
+            <i class="bi bi-play-circle-fill"></i> Process & Analyze Dataset
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Recommended Columns Card -->
+    <div style="margin-top: 2rem; background: white; border-radius: var(--radius-md); padding: 1.75rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+      <h4 style="color: var(--text-main); margin-bottom: 1rem; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="bi bi-check-circle-fill" style="color: var(--primary);"></i> Recommended Dataset Header Columns
+      </h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.6rem; font-size: 0.9rem; color: var(--text-muted);">
+        <div><i class="bi bi-geo-alt-fill" style="color: var(--primary);"></i> Observation Latitude</div>
+        <div><i class="bi bi-geo-alt" style="color: var(--primary);"></i> Observation Longitude</div>
+        <div><i class="bi bi-calendar-event" style="color: var(--primary);"></i> Measurement Date (UTC)</div>
+        <div><i class="bi bi-clock" style="color: var(--primary);"></i> Measurement Time (UTC)</div>
+        <div><i class="bi bi-cloud-sun" style="color: var(--primary);"></i> Total Cloud Cover %</div>
+        <div><i class="bi bi-thermometer-half" style="color: var(--primary);"></i> Surface Air Temperature</div>
+        <div><i class="bi bi-droplet-half" style="color: var(--primary);"></i> Surface Relative Humidity %</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
 {% endblock %}

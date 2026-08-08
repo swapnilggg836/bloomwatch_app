@@ -1,13 +1,90 @@
 {% extends "base.html" %}
+
+{% block title %}Analysis Dashboard — BloomWatch Results{% endblock %}
+
 {% block content %}
-<h2>Results</h2>
-{% for summary in summaries %}
-  <h3>{{ summary['filename'] }}</h3>
-  <ul>
-    <li>PDF: <a href="{{ url_for('download', pdfname=summary['pdf']) }}">Download</a></li>
-  </ul>
-  {% for img in summary['image_files'] %}
-    <img src="{{ url_for('static', filename=img) }}" width="400">
+<div class="animate-fade">
+  {% for summary in summaries %}
+    {% set pdf_name = summary.get('pdf_path') or summary.get('pdf') %}
+    
+    <!-- Top Header Banner -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 2.25rem; color: var(--primary-dark); margin-bottom: 0.25rem;">Dataset Analysis Results</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          File: <strong>{{ summary.get('input_file') or summary.get('filename') }}</strong>
+        </p>
+      </div>
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        {% if pdf_name %}
+          <a href="{{ url_for('download', pdfname=pdf_name) }}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF Report
+          </a>
+        {% endif %}
+        <a href="{{ url_for('suggestions') }}" class="btn btn-secondary">
+          <i class="bi bi-lightbulb-fill" style="color: #f59e0b;"></i> Recommendations
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="metrics-row">
+      <div class="stat-box">
+        <div class="stat-value">{{ summary.get('rows_original', 0) }}</div>
+        <div class="stat-label">Original Rows</div>
+      </div>
+      <div class="stat-box" style="border-left-color: var(--secondary);">
+        <div class="stat-value">{{ summary.get('rows_cleaned', 0) }}</div>
+        <div class="stat-label">Cleaned Valid Rows</div>
+      </div>
+      <div class="stat-box" style="border-left-color: var(--accent-rose);">
+        <div class="stat-value">
+          {% if summary.get('metrics') and summary['metrics'].get('accuracy') %}
+            {{ (summary['metrics']['accuracy'] * 100)|round(1) }}%
+          {% else %}
+            N/A
+          {% endif %}
+        </div>
+        <div class="stat-label">RandomForest Accuracy</div>
+      </div>
+      <div class="stat-box" style="border-left-color: #8b5cf6;">
+        <div class="stat-value">{{ summary.get('image_files', [])|length }}</div>
+        <div class="stat-label">Generated Visualizations</div>
+      </div>
+    </div>
+
+    <!-- Generated Chart Graphics Gallery -->
+    <h2 style="font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="bi bi-images" style="color: var(--secondary);"></i> Generated Visualization Charts
+    </h2>
+
+    {% if summary.get('image_files') %}
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.75rem; margin-bottom: 3rem;">
+        {% for img in summary['image_files'] %}
+          <div class="glass-card" style="padding: 1.25rem;">
+            <img src="{{ url_for('static', filename=img) }}" alt="Analysis Plot" class="chart-card-img">
+            <div style="margin-top: 0.85rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-align: center;">
+              <i class="bi bi-graph-up-arrow"></i> {{ img }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="glass-card" style="text-align: center; padding: 3rem;">
+        <i class="bi bi-exclamation-circle" style="font-size: 2.5rem; color: var(--accent);"></i>
+        <p style="margin-top: 1rem; color: var(--text-muted);">No chart images generated for this dataset run.</p>
+      </div>
+    {% endif %}
   {% endfor %}
-{% endfor %}
+
+  <!-- Next Actions CTA -->
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('custom_analysis') }}" class="btn btn-outline" style="margin-right: 0.5rem;">
+      <i class="bi bi-sliders"></i> Perform Custom Scatter Plot
+    </a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+      <i class="bi bi-plus-circle"></i> Upload Another Dataset
+    </a>
+  </div>
+</div>
 {% endblock %}

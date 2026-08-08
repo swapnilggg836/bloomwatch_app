@@ -1,18 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>BloomWatch Analysis</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BloomWatch — AI Environmental & Algal Analytics{% endblock %}</title>
+  
+  <meta name="description" content="BloomWatch is an advanced machine learning platform for satellite data cleaning, surface temperature analysis, and predictive modeling of harmful algal blooms.">
+  <meta name="theme-color" content="#10b981">
+
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head_extra %}{% endblock %}
 </head>
 <body>
-  <nav>
-    <a href="{{ url_for('index') }}">Upload Data</a> |
-    <a href="{{ url_for('custom_analysis') }}">Custom Analysis</a> |
-    <a href="{{ url_for('suggestions') }}">Suggestions</a> |
-    <a href="{{ url_for('history') }}">History</a>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="topNavbar">
+    <div class="container nav-container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <i class="bi bi-flower1"></i>
+        <span>BloomWatch</span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation Menu">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"><i class="bi bi-cloud-upload"></i> Upload Data</a></li>
+        <li><a href="{{ url_for('custom_analysis') }}" class="nav-link {% if request.endpoint == 'custom_analysis' %}active{% endif %}"><i class="bi bi-sliders"></i> Custom Analysis</a></li>
+        <li><a href="{{ url_for('suggestions') }}" class="nav-link {% if request.endpoint == 'suggestions' %}active{% endif %}"><i class="bi bi-lightbulb"></i> Suggestions</a></li>
+        <li><a href="{{ url_for('history') }}" class="nav-link {% if request.endpoint == 'history' %}active{% endif %}"><i class="bi bi-clock-history"></i> History</a></li>
+      </ul>
+    </div>
   </nav>
-  <div class="content">
-    {% block content %}{% endblock %}
-  </div>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="alert-container">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                <span><i class="bi bi-info-circle-fill" style="margin-right: 0.5rem;"></i> {{ message }}</span>
+                <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; cursor:pointer; color:inherit; font-size:1.1rem;">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Responsive Modern Footer -->
+  <footer style="background: #0f172a; color: #94a3b8; padding: 3rem 0 1.5rem 0; margin-top: auto; border-top: 1px solid #1e293b;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;"><i class="bi bi-flower1" style="color: var(--primary);"></i> BloomWatch</h4>
+          <p style="font-size: 0.9rem; line-height: 1.5;">Empowering water resource management and environmental intelligence with machine learning and automated satellite data analysis.</p>
+        </div>
+        <div>
+          <h5 style="color: white; margin-bottom: 1rem;">Navigation</h5>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+            <li><a href="{{ url_for('index') }}" style="color: #cbd5e1;"><i class="bi bi-chevron-right"></i> Upload Dataset</a></li>
+            <li><a href="{{ url_for('custom_analysis') }}" style="color: #cbd5e1;"><i class="bi bi-chevron-right"></i> Custom Scatter Analysis</a></li>
+            <li><a href="{{ url_for('suggestions') }}" style="color: #cbd5e1;"><i class="bi bi-chevron-right"></i> Smart Suggestions</a></li>
+            <li><a href="{{ url_for('history') }}" style="color: #cbd5e1;"><i class="bi bi-chevron-right"></i> History Log</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 style="color: white; margin-bottom: 1rem;">Engine Stack</h5>
+          <p style="font-size: 0.9rem; color: #cbd5e1;">Python Flask Serverless, scikit-learn RandomForest, pandas, seaborn, ReportLab PDF generation, and Emerald Glassmorphism UI.</p>
+        </div>
+      </div>
+      <div style="text-align: center; border-top: 1px solid #1e293b; padding-top: 1.5rem; font-size: 0.85rem;">
+        &copy; 2026 BloomWatch Predictive Analytics Engine. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
 </body>
 </html>

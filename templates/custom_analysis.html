@@ -1,22 +1,59 @@
 {% extends "base.html" %}
+
+{% block title %}Custom Parameter Analysis — BloomWatch{% endblock %}
+
 {% block content %}
-<h2>Custom Analysis</h2>
-<form method="post">
-  <input type="text" name="relation" placeholder="col1 vs col2">
-  <button type="submit">Analyze</button>
-</form>
+<div class="animate-fade" style="max-width: 900px; margin: 0 auto;">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h1 style="font-size: 2.25rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Custom Column Scatter Analysis</h1>
+    <p style="color: var(--text-muted);">Compare two environmental parameters from your uploaded datasets to generate an automated correlation plot.</p>
+  </div>
 
-{% if result %}
-  <p>Generated Plot: {{ result }}</p>
-  <img src="{{ url_for('static', filename=result) }}" width="400">
-{% endif %}
+  <!-- Relation Selector Form -->
+  <div class="glass-card" style="margin-bottom: 2.5rem;">
+    <form method="POST">
+      <div style="margin-bottom: 1.5rem;">
+        <label for="relation" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">
+          <i class="bi bi-sliders"></i> Enter Column Comparison (Format: <code>Column1 vs Column2</code>)
+        </label>
+        <input type="text" name="relation" id="relation" class="chat-input" placeholder="e.g. Surface Air Temperature vs Total Cloud Cover %" required>
+      </div>
 
-{% if suggestions %}
-  <h3>Suggested Relations</h3>
-  <ul>
-    {% for s in suggestions %}
-      <li>{{ s }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
+      <!-- Quick Preset Suggestions Buttons -->
+      <div style="margin-bottom: 1.5rem;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Quick Presets:</span>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" onclick="document.getElementById('relation').value='Surface Air Temperature vs Total Cloud Cover %'">
+            Surface Temp vs Cloud Cover
+          </button>
+          <button type="button" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" onclick="document.getElementById('relation').value='Surface Air Temperature vs Surface Relative Humidity %'">
+            Temp vs Relative Humidity
+          </button>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2.25rem; font-size: 1rem;">
+          <i class="bi bi-graph-up-arrow"></i> Generate Scatter Plot
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Plot Result Preview Card -->
+  {% if result %}
+    <div class="glass-card" style="text-align: center; margin-bottom: 2.5rem;">
+      <h3 class="card-title" style="justify-content: center; margin-bottom: 1rem;">
+        <i class="bi bi-check-circle-fill" style="color: var(--primary);"></i> Generated Correlation Scatter Plot
+      </h3>
+      {% if result.startswith('Error') %}
+        <div class="alert alert-danger" style="display: inline-block;">
+          <i class="bi bi-exclamation-triangle-fill"></i> {{ result }}
+        </div>
+      {% else %}
+        <img src="{{ url_for('static', filename=result) }}" alt="Scatter Plot" class="chart-card-img" style="max-width: 100%; margin: 0 auto; border-radius: var(--radius-md);">
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

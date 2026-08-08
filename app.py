@@ -11,7 +11,7 @@ from pipeline import run_pipeline
 from models import db, AnalysisHistory
 
 # ---------------- Flask setup ----------------
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="/static")
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "bloomwatch-secret-key-12345")
 
 is_vercel = os.environ.get("VERCEL") is not None
@@ -22,14 +22,13 @@ else:
     base_dir = "."
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///analysis.db")
 
-
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
 UPLOAD_FOLDER = os.path.join(base_dir, "uploads")
 OUTPUT_FOLDER = os.path.join(base_dir, "outputs")
-STATIC_FOLDER = "static" if not is_vercel else os.path.join(base_dir, "static")
+STATIC_FOLDER = os.path.join(base_dir, "static") if is_vercel else "static"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -37,6 +36,7 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 with app.app_context():
     db.create_all()
+
 
 
 

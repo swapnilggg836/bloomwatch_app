@@ -33,7 +33,7 @@
               <td>
                 <strong style="color: var(--primary-dark);"><i class="bi bi-file-earmark-spreadsheet-fill"></i> {{ r.input_file }}</strong>
               </td>
-              <td>{{ r.rows_cleaned or '-' }}</td>
+              <td>{{ metrics.get('rows_cleaned') or '-' }}</td>
               <td>
                 {% if metrics and metrics.get('accuracy') %}
                   <span style="display: inline-block; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: #d1fae5; color: #065f46; font-weight: 700; font-size: 0.85rem;">

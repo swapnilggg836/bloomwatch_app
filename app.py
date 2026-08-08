@@ -40,8 +40,9 @@ with app.app_context():
 
 
 # ---------------- Custom Static Handler ----------------
-@app.route("/static/<path:filename>")
+@app.route("/static/<path:filename>", endpoint="static")
 def serve_custom_static(filename):
+
     # 1. Check in root project static folder (style.css, js/main.js, css/style.css, etc.)
     file_in_root = os.path.join(ROOT_STATIC_FOLDER, filename)
     if os.path.isfile(file_in_root):

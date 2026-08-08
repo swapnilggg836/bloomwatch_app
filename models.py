@@ -9,9 +9,6 @@ class AnalysisHistory(db.Model):
     input_file = db.Column(db.String(255), nullable=False)
     pdf_path = db.Column(db.String(255))
     metrics = db.Column(db.Text)  # JSON string of metrics
-    rows_original = db.Column(db.Integer, nullable=True)
-    rows_cleaned = db.Column(db.Integer, nullable=True)
-    summary = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_metrics_dict(self):

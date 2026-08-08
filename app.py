@@ -12,14 +12,16 @@ from models import db, AnalysisHistory
 
 # ---------------- Flask setup ----------------
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "bloomwatch-secret-key-12345")
 
 is_vercel = os.environ.get("VERCEL") is not None
 if is_vercel:
     base_dir = "/tmp"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/analysis.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:////tmp/analysis.db")
 else:
     base_dir = "."
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///analysis.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///analysis.db")
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

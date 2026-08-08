@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BloomWatch Analysis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('index') }}">Upload Data</a> |
+    <a href="{{ url_for('custom_analysis') }}">Custom Analysis</a> |
+    <a href="{{ url_for('suggestions') }}">Suggestions</a> |
+    <a href="{{ url_for('history') }}">History</a>
+  </nav>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

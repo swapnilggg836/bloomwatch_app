@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Results</h2>
+{% for summary in summaries %}
+  <h3>{{ summary['filename'] }}</h3>
+  <ul>
+    <li>PDF: <a href="{{ url_for('download', pdfname=summary['pdf']) }}">Download</a></li>
+  </ul>
+  {% for img in summary['image_files'] %}
+    <img src="{{ url_for('static', filename=img) }}" width="400">
+  {% endfor %}
+{% endfor %}
+{% endblock %}

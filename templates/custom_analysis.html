@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Custom Analysis</h2>
+<form method="post">
+  <input type="text" name="relation" placeholder="col1 vs col2">
+  <button type="submit">Analyze</button>
+</form>
+
+{% if result %}
+  <p>Generated Plot: {{ result }}</p>
+  <img src="{{ url_for('static', filename=result) }}" width="400">
+{% endif %}
+
+{% if suggestions %}
+  <h3>Suggested Relations</h3>
+  <ul>
+    {% for s in suggestions %}
+      <li>{{ s }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

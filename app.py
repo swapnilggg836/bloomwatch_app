@@ -11,7 +11,7 @@ from pipeline import run_pipeline
 from models import db, AnalysisHistory
 
 # ---------------- Flask setup ----------------
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__, static_folder=None)  # Disable default static handler to use custom fallback handler below
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "bloomwatch-secret-key-12345")
 
 is_vercel = os.environ.get("VERCEL") is not None
@@ -29,6 +29,7 @@ db.init_app(app)
 UPLOAD_FOLDER = os.path.join(base_dir, "uploads")
 OUTPUT_FOLDER = os.path.join(base_dir, "outputs")
 STATIC_FOLDER = os.path.join(base_dir, "static") if is_vercel else "static"
+ROOT_STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -36,6 +37,28 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 with app.app_context():
     db.create_all()
+
+
+# ---------------- Custom Static Handler ----------------
+@app.route("/static/<path:filename>")
+def serve_custom_static(filename):
+    # 1. Check in root project static folder (style.css, js/main.js, css/style.css, etc.)
+    file_in_root = os.path.join(ROOT_STATIC_FOLDER, filename)
+    if os.path.isfile(file_in_root):
+        return send_file(file_in_root)
+
+    # 2. Check in /tmp/static or local static folder (generated charts)
+    file_in_static = os.path.join(STATIC_FOLDER, filename)
+    if os.path.isfile(file_in_static):
+        return send_file(file_in_static)
+
+    # 3. Check in outputs folder
+    file_in_outputs = os.path.join(OUTPUT_FOLDER, filename)
+    if os.path.isfile(file_in_outputs):
+        return send_file(file_in_outputs)
+
+    return "Static file not found", 404
+
 
 
 
